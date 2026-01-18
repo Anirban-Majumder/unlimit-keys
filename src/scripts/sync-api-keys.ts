@@ -1,60 +1,73 @@
-import 'dotenv/config';
-import { Redis } from '@upstash/redis';
+import { redis } from '../schema/redis';
 
-// Note: checking for properties on process.env needs type assertions or simply checking existence
-if (!process.env.REDIS_URL || !process.env.REDIS_TOKEN) {
-    throw new Error('Missing Upstash Redis credentials in .env file');
-}
-
-const redis = new Redis({
-    url: process.env.REDIS_URL,
-    token: process.env.REDIS_TOKEN,
-});
-
-const KEY_SET = 'ru_api_keys';
+const KEY_SET = 'API_KEYS';
 
 async function syncApiKeys() {
-    console.log('Syncing API keys from RU_API_KEYS...');
+    console.log('🔄 Starting API key sync...\n');
 
-    const keysString = process.env.RU_API_KEYS || '';
+    const keysString = process.env.API_KEYS || '';
     const keysFromEnv = keysString.split(/[\n,]/).map(k => k.trim()).filter(Boolean);
 
     if (keysFromEnv.length === 0) {
-        console.warn('No RU_API_KEYS found in environment variables.');
+        console.warn('⚠️  No API_KEYS found in environment variables.');
+        console.warn('   Make sure API_KEYS is set in your .env or .env.local file.\n');
+        return;
+    }
+
+    console.log(`📋 Found ${keysFromEnv.length} keys in environment`);
+
+    // Get existing keys
+    const keysInRedis = await redis.zrange(KEY_SET, 0, -1) as string[];
+    console.log(`🗄️ Found ${keysInRedis.length} keys in Redis\n`);
+
+    // Use Sets for O(1) lookup instead of O(n) array includes
+    const envKeySet = new Set(keysFromEnv);
+    const redisKeySet = new Set(keysInRedis);
+
+    const keysToAdd = keysFromEnv.filter(k => !redisKeySet.has(k));
+    const keysToRemove = keysInRedis.filter(k => !envKeySet.has(k));
+
+    if (keysToAdd.length === 0 && keysToRemove.length === 0) {
+        console.log('✅ Keys are already in sync. No changes needed.\n');
         return;
     }
 
     const pipeline = redis.pipeline();
 
-    // Get existing keys
-    const keysInRedis = await redis.zrange(KEY_SET, 0, -1) as string[];
-
-    // Determine additions and removals
-    const keysToAdd = keysFromEnv.filter(k => !keysInRedis.includes(k));
-    const keysToRemove = keysInRedis.filter(k => !keysFromEnv.includes(k));
-
     if (keysToAdd.length > 0) {
-        console.log(`Adding ${keysToAdd.length} new keys.`);
+        console.log(`➕ Adding ${keysToAdd.length} new key(s):`);
         for (const key of keysToAdd) {
-            // Add with score 0 (least used)
+            console.log(`   • ${key.slice(0, 10)}...${key.slice(-4)}`);
             pipeline.zadd(KEY_SET, { score: 0, member: key });
         }
+        console.log();
     }
 
     if (keysToRemove.length > 0) {
-        console.log(`Removing ${keysToRemove.length} stale keys.`);
+        console.log(`➖ Removing ${keysToRemove.length} stale key(s):`);
+        for (const key of keysToRemove) {
+            console.log(`   • ${key.slice(0, 10)}...${key.slice(-4)}`);
+        }
         pipeline.zrem(KEY_SET, ...keysToRemove);
+        console.log();
     }
 
-    if (keysToAdd.length === 0 && keysToRemove.length === 0) {
-        console.log('Keys are already in sync.');
-    } else {
-        await pipeline.exec();
-        console.log('Sync complete.');
-    }
+    await pipeline.exec();
+    
+    console.log('─'.repeat(40));
+    console.log(`✨ Sync complete!`);
+    console.log(`   Total keys in pool: ${keysFromEnv.length}`);
+    if (keysToAdd.length > 0) console.log(`   Added: ${keysToAdd.length}`);
+    if (keysToRemove.length > 0) console.log(`   Removed: ${keysToRemove.length}`);
+    console.log();
 }
 
-syncApiKeys().catch((err) => {
-    console.error('Error syncing keys:', err);
-    process.exit(1);
-});
+export { syncApiKeys };
+
+// Run directly if this is the main module
+if (require.main === module) {
+    syncApiKeys().catch((err) => {
+        console.error('Error syncing keys:', err);
+        process.exit(1);
+    });
+}

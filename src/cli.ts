@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
 import { getLeastUsedKey } from './schema/getLeastUsedKey';
+import { syncApiKeys } from './scripts/sync-api-keys';
 
 const program = new Command();
 
 program
   .name('unlimit-keys')
   .description('Distributed LRU API key rotation using Redis')
-  .version('0.1.0');
+  .version('0.1.5');
 
 program
   .command('get-key')
@@ -24,10 +25,14 @@ program
 
 program
   .command('sync')
-  .description('Sync API keys from RU_API_KEYS env var to Redis')
-  .action(() => {
-    console.log('Please run: npx unlimit-keys sync');
-    console.log('Or: node dist/scripts/sync-api-keys.js');
+  .description('Sync API keys from API_KEYS env var to Redis')
+  .action(async () => {
+    try {
+      await syncApiKeys();
+    } catch (error) {
+      console.error('Error:', error instanceof Error ? error.message : error);
+      process.exit(1);
+    }
   });
 
 program.parse();

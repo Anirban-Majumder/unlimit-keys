@@ -20,7 +20,7 @@ REDIS_URL=https://your-redis-url.upstash.io
 REDIS_TOKEN=your-token
 
 # Comma-separated or newline-separated API keys
-RU_API_KEYS="key1,key2,key3"
+API_KEYS="key1,key2,key3"
 ```
 
 ### 2. Sync Keys to Redis
@@ -52,7 +52,7 @@ npx unlimit-keys get-key
 
 ## How It Works
 
-1.  **Key Pool**: Keys are stored in a single Redis Sorted Set (`ru_api_keys`).
+1.  **Key Pool**: Keys are stored in a single Redis Sorted Set (`API_KEYS`).
 2.  **LRU Rotation**: When you request a key, the library atomically:
     *   Finds the key with the lowest score (oldest usage timestamp).
     *   Updates that key's score to the current timestamp.

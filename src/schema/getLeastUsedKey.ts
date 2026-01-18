@@ -1,6 +1,6 @@
 import { redis } from './redis';
 
-const KEY_SET = 'ru_api_keys';
+const KEY_SET = 'API_KEYS';
 
 /**
  * Fetches the least recently used API key from the global pool.
@@ -29,7 +29,7 @@ export async function getLeastUsedKey(): Promise<string> {
     const key = await redis.eval(script, [KEY_SET], [currentTime]) as string | null;
 
     if (!key) {
-        throw new Error('No API keys found in Redis. Please check your RU_API_KEYS environment variable and run the sync script.');
+        throw new Error('No API keys found in Redis. Please check your API_KEYS environment variable and run the sync script.');
     }
 
     return key;

@@ -1,7 +1,7 @@
 {
   "name": "unlimit-keys",
   "version": "0.1.0",
-  "description": "Distributed LRU API key rotation using Redis",
+  "description": "An API key rotation system using Redis",
   "author": "Anirban Majumder <anirbanmajumder.404@gmail.com>",
   "repository": {
     "type": "git",
@@ -38,10 +38,11 @@
   ],
   "scripts": {
     "build": "tsc",
-    "prepublishOnly": "npm run build",
-    "sync": "node dist/scripts/sync-api-keys.js",
+    "dev": "tsc --watch",
     "test": "vitest run",
-    "publish-pkg": "npm publish --access public"
+    "sync": "node dist/scripts/sync-api-keys.js",
+    "prepublishOnly": "npm run build && npm run test",
+    "publish": "npm publish --access public"
   },
   "type": "commonjs",
   "engines": {
@@ -49,11 +50,11 @@
   },
   "dependencies": {
     "@upstash/redis": ">=1.0.0",
-    "commander": "^14.0.0"
+    "commander": "^14.0.0",
+    "dotenv": "^17.2.3"
   },
   "devDependencies": {
     "@types/node": "^24.0.15",
-    "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
     "vitest": "^4.0.17"
   },

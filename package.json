@@ -1,0 +1,68 @@
+{
+  "name": "unlimit-keys",
+  "version": "0.1.0",
+  "description": "Distributed LRU API key rotation using Redis",
+  "author": "Anirban Majumder <anirbanmajumder.404@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Anirban-Majumder/unlimit-keys.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Anirban-Majumder/unlimit-keys/issues"
+  },
+  "homepage": "https://github.com/Anirban-Majumder/unlimit-keys#readme",
+  "license": "MIT",
+  "keywords": [
+    "rate-limit",
+    "api-key",
+    "redis",
+    "upstash",
+    "key-rotation",
+    "lru",
+    "keys"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "import": "./dist/index.js"
+    }
+  },
+  "bin": {
+    "unlimit-keys": "./dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
+    "sync": "node dist/scripts/sync-api-keys.js",
+    "test": "vitest run",
+    "publish-pkg": "npm publish --access public"
+  },
+  "type": "commonjs",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@upstash/redis": ">=1.0.0",
+    "commander": "^14.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.15",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3",
+    "vitest": "^4.0.17"
+  },
+  "peerDependencies": {
+    "@upstash/redis": ">=1.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@upstash/redis": {
+      "optional": true
+    }
+  }
+}

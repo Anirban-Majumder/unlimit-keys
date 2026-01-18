@@ -1,16 +1,10 @@
 # 🔑 unlimit-keys
 
-**Never get blocked by rate limits again!** 
+## **Never get blocked by rate limits again!** 
 
 Tired of hitting "Rate Limit Exceeded" errors? Use this tool to automatically rotate between your API keys. It picks the best key every time you make a request - so you can use AI services (Google Gemini, Groq, OpenAI, and more) without worrying about limits!
 
-## What Problem Does It Solve? 🤔
-
-Most APIs limit how many requests you can make per minute. If you have 3 API keys, you can make 3x more requests! This tool automatically picks which key to use, making sure no single key gets overworked.
-
-**Think of it like this:** You have 3 cashiers at a store. Instead of always using the same cashier, this tool sends customers to whoever is least busy. Everyone gets served faster! 
-
-**What you get:**
+## **What you get:**
 - 🚀 Use APIs 3x more (with 3 keys), 10x more (with 10 keys), etc.
 - 🔄 Automatic key rotation - no manual switching
 - ✅ Works with ANY API (AI, weather, payment, search, etc.)

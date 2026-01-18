@@ -8,7 +8,7 @@ const program = new Command();
 program
   .name('unlimit-keys')
   .description('Distributed LRU API key rotation using Redis')
-  .version('0.1.5');
+  .version(require('../package.json').version);
 
 program
   .command('get-key')

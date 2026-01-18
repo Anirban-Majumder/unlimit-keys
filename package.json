@@ -41,8 +41,7 @@
     "dev": "tsc --watch",
     "test": "vitest run",
     "sync": "node dist/scripts/sync-api-keys.js",
-    "prepublishOnly": "npm run build && npm run test",
-    "publish": "npm publish --access public"
+    "prepublishOnly": "npm run build && npm run test"
   },
   "type": "commonjs",
   "engines": {

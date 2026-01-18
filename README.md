@@ -65,6 +65,7 @@ import { getLeastUsedKey } from 'unlimit-keys';
 
 // Get the best key to use right now
 const apiKey = await getLeastUsedKey();
+console.log("Using API Key:", apiKey);
 
 // Use it with your AI service
 const response = await fetch('https://api.example.com/chat', {
@@ -75,7 +76,6 @@ const response = await fetch('https://api.example.com/chat', {
 ### Option 2: Command Line 📱
 
 ```bash
-# Get a key via command line
 npx unlimit-keys get-key
 ```
 
@@ -89,7 +89,7 @@ import { getLeastUsedKey } from 'unlimit-keys';
 async function askGemini(question: string) {
   const apiKey = await getLeastUsedKey();
   
-  const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent', {
+  const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -140,7 +140,7 @@ async function askWithSDK(question: string) {
   const apiKey = await getLeastUsedKey();
   const genAI = new GoogleGenerativeAI(apiKey);
   
-  const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
   const result = await model.generateContent(question);
   
   return result.response.text();

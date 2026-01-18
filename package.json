@@ -5,7 +5,7 @@
   "author": "Anirban Majumder <anirbanmajumder.404@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Anirban-Majumder/unlimit-keys.git"
+    "url": "git+https://github.com/Anirban-Majumder/unlimit-keys.git"
   },
   "bugs": {
     "url": "https://github.com/Anirban-Majumder/unlimit-keys/issues"
@@ -31,7 +31,7 @@
     }
   },
   "bin": {
-    "unlimit-keys": "./dist/cli.js"
+    "unlimit-keys": "dist/cli.js"
   },
   "files": [
     "dist"

@@ -48,21 +48,16 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@upstash/redis": ">=1.0.0",
     "commander": "^14.0.0",
     "dotenv": "^17.2.3"
   },
   "devDependencies": {
     "@types/node": "^24.0.15",
+    "@upstash/redis": ">=1.0.0",
     "typescript": "^5.8.3",
     "vitest": "^4.0.17"
   },
   "peerDependencies": {
     "@upstash/redis": ">=1.0.0"
-  },
-  "peerDependenciesMeta": {
-    "@upstash/redis": {
-      "optional": true
-    }
   }
 }

@@ -2,34 +2,30 @@ import { redis } from './redis';
 
 const KEY_SET = 'API_KEYS';
 
+const SCRIPT = `
+local key = redis.call('zrange', KEYS[1], 0, 0)[1]
+if key then
+    redis.call('zadd', KEYS[1], ARGV[1], key)
+    return key
+end
+return nil`;
+
 /**
  * Fetches the least recently used API key from the global pool.
- * Automatically updates the key's usage timestamp.
+ * Atomically updates the key's usage timestamp.
  *
  * @returns The API key to be used.
  * @throws Will throw an error if no keys are found.
  */
 export async function getLeastUsedKey(): Promise<string> {
-    const currentTime = Date.now() / 1000;
-
-    // Atomic Lua script:
-    // 1. Get the key with the lowest score (least recently used)
-    // 2. If a key exists, update its score to current time
-    // 3. Return the key
-    const script = `
-        local key = redis.call('zrange', KEYS[1], 0, 0)[1]
-        if key then
-            redis.call('zadd', KEYS[1], ARGV[1], key)
-            return key
-        else
-            return nil
-        end
-    `;
-
-    const key = await redis.eval(script, [KEY_SET], [currentTime]) as string | null;
+    const key = await redis.eval<string | null>(SCRIPT, [KEY_SET], [Date.now() / 1000]);
 
     if (!key) {
-        throw new Error('No API keys found in Redis. Please check your API_KEYS environment variable and run the sync script.');
+        throw new Error(
+            'unlimit-keys ERROR: No API keys found in Redis.\n' +
+            '  1. Set your keys in the API_KEYS environment variable (comma or newline separated)\n' +
+            '  2. Run: npx unlimit-keys sync'
+        );
     }
 
     return key;

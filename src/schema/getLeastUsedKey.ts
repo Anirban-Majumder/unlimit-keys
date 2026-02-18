@@ -18,7 +18,7 @@ return nil`;
  * @throws Will throw an error if no keys are found.
  */
 export async function getLeastUsedKey(): Promise<string> {
-    const key = await redis.eval<string | null>(SCRIPT, [KEY_SET], [Date.now() / 1000]);
+    const key = await redis.eval(SCRIPT, [KEY_SET], [Date.now() / 1000]) as string | null;
 
     if (!key) {
         throw new Error(
